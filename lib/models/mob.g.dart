@@ -21,13 +21,14 @@ class MobAdapter extends TypeAdapter<Mob> {
       numberOfSheep: fields[1] as int,
       weight: fields[2] as double,
       rationKg: fields[3] as double,
+      rationType: fields[4] as String,
     );
   }
 
   @override
   void write(BinaryWriter writer, Mob obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class MobAdapter extends TypeAdapter<Mob> {
       ..writeByte(2)
       ..write(obj.weight)
       ..writeByte(3)
-      ..write(obj.rationKg);
+      ..write(obj.rationKg)
+      ..writeByte(4)
+      ..write(obj.rationType);
   }
 
   @override

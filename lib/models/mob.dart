@@ -16,11 +16,15 @@ class Mob extends HiveObject {
   @HiveField(3)
   double rationKg;
 
+  @HiveField(4)
+  String rationType;
+
   Mob({
     required this.name,
     required this.numberOfSheep,
     required this.weight,
     required this.rationKg,
+    required this.rationType
   });
 
   double get totalDailyRation => numberOfSheep * rationKg;

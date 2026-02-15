@@ -18,7 +18,8 @@ class _MobFormScreenState extends State<MobFormScreen> {
   late int numberOfSheep;
   late double weight;
   late double rationKg;
-
+  late String? rationType;
+  late final rationTypes = ['Hay', 'Pellets', 'Pasture'];
 
   @override
   void initState() {
@@ -29,6 +30,7 @@ class _MobFormScreenState extends State<MobFormScreen> {
     numberOfSheep = mob?.numberOfSheep ?? 0;
     weight = mob?.weight ?? 0.0;
     rationKg = mob?.rationKg ?? 0.0;
+    rationType = mob?.rationType;
   }
 
   Future<void> _save() async {
@@ -44,6 +46,7 @@ class _MobFormScreenState extends State<MobFormScreen> {
         numberOfSheep: numberOfSheep,
         weight: weight,
         rationKg: rationKg,
+        rationType: rationType!
       );
       await box.add(mob);
     } else {
@@ -95,6 +98,22 @@ class _MobFormScreenState extends State<MobFormScreen> {
                 keyboardType: TextInputType.number,
                 onSaved: (v) => rationKg = double.parse(v!),
               ),
+              DropdownButtonFormField<String>(
+                decoration: const InputDecoration(labelText: 'Ration Type'),
+                initialValue: rationType,
+                items: rationTypes
+                    .map((type) => DropdownMenuItem(
+                          value: type,
+                          child: Text(type),
+                        ))
+                    .toList(),
+                onChanged: (value) {
+                  setState(() => rationType = value);
+                },
+                validator: (value) =>
+                    value == null ? 'Please select a ration type' : null,
+              ),
+
               const SizedBox(height: 24),
               ElevatedButton(
                 onPressed: _save,
