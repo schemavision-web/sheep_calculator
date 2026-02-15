@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'services/db.dart';
 import 'screens/home_screen.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await DB.init();
   runApp(const SheepCalculatorApp());
 }
 

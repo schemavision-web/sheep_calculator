@@ -1,26 +1,19 @@
-import 'package:isar/isar.dart';
-import 'package:path_provider/path_provider.dart';
+import 'package:hive_flutter/hive_flutter.dart';
 import '../models/mob.dart';
 
 class DB {
-  static Isar? _instance;
+  static bool _initialized = false;
 
-  static Future<Isar> get instance async {
-    if (_instance != null) return _instance!;
+  static Future<void> init() async {
+    if (_initialized) return;
 
-    // On web, Isar handles storage automatically.
-    if (Isar.instanceNames.isNotEmpty) {
-      _instance = Isar.getInstance()!;
-      return _instance!;
-    }
+    await Hive.initFlutter();
+    Hive.registerAdapter(MobAdapter());
 
-    final dir = await getApplicationDocumentsDirectory();
+    await Hive.openBox<Mob>('mobs');
 
-    _instance = await Isar.open(
-      [MobSchema],
-      directory: dir.path,
-    );
-
-    return _instance!;
+    _initialized = true;
   }
+
+  static Box<Mob> get mobsBox => Hive.box<Mob>('mobs');
 }

@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:isar/isar.dart';
 import '../services/db.dart';
 import '../models/mob.dart';
+import 'mob_form_screen.dart';
+import 'mob_view_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -20,25 +21,27 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Future<void> _loadMobs() async {
-    final isar = await DB.instance;
-    final results = await isar.mobs.where().findAll();
-    setState(() => mobs = results);
+    final box = DB.mobsBox;
+    setState(() => mobs = box.values.toList());
   }
 
   Future<void> _addMob() async {
-    final isar = await DB.instance;
+    final changed = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => const MobFormScreen()),
+    );
 
-    final mob = Mob()
-      ..name = "New Mob"
-      ..numberOfSheep = 50
-      ..weight = 60.0
-      ..rationKg = 1.5;
+    if (changed == true) _loadMobs();
+  }
 
-    await isar.writeTxn(() async {
-      await isar.mobs.put(mob);
-    });
 
-    _loadMobs();
+  Future<void> _openMob(Mob mob) async {
+    final changed = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => MobViewScreen(mob: mob)),
+    );
+
+    if (changed == true) _loadMobs();
   }
 
   @override
@@ -51,9 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
           final mob = mobs[index];
           return ListTile(
             title: Text(mob.name),
-            subtitle: Text(
-              "${mob.numberOfSheep} sheep • ${mob.weight} kg • ${mob.rationKg} kg ration",
-            ),
+            subtitle: Text("${mob.numberOfSheep} sheep"),
+            onTap: () => _openMob(mob),
           );
         },
       ),
